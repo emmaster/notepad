@@ -1,3 +1,5 @@
+require 'Date'
+
 class Task < Post
   def initialize
     super
@@ -18,5 +20,19 @@ class Task < Post
     time_string = "Создано: #{@created_at.strftime("%Y.%m.%d, %H:%M:%S")} \n\r \n\r"
     deadline = "Крайний срок: #{@due_date}"
     return [deadline, @text, time_string]
+  end
+
+  def to_db_hash
+    return super.merge({
+                           'text'=> @text,
+                       'due_date' => @due_date.to_s
+                       })
+
+  end
+
+  def load_data(data_hash)
+    super(data_hash)
+    @text = data_hash['text'].split('\n\r')
+    @due_date = Date.parse(data_hash['due_date'])
   end
 end
